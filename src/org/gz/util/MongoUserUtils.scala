@@ -21,7 +21,7 @@ class MongoUserUtils extends Conf{
   	s"mongodb://${user}:${passwd}@${uri}/?authSource=${authDB}"
   }
   
-  def clusterMongoURI = generateMongoURI(clusterUser, clusterPW, clusterURI, clusterAuthDB)
+  def clusterMongoURI = generateMongoURI(clusterUser, clusterPW, clusterURIAll, clusterAuthDB)
   def clusterLocalMongoURI(localURI: String) = generateMongoURI(clusterUser, clusterPW, localURI, clusterAuthDB)
   
   def backupMongoURI = generateMongoURI(backupUser, backupPW, backupURI, backupAuthDB)

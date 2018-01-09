@@ -6,7 +6,7 @@ import java.sql.ResultSet
 import java.sql.SQLException
 
 class DBOperation extends Conf {
-  
+	
   private val driver = "com.mysql.jdbc.Driver"
   private val url = config.getString("jdbc.url")
   private val username = config.getString("jdbc.user")
@@ -28,7 +28,7 @@ class DBOperation extends Conf {
     catch {
       case e: Throwable => throw new SQLException(e.toString())
     }
-  }
+  }  
   
   /**
    * delete，insert，update

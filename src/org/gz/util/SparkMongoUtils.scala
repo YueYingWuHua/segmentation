@@ -13,12 +13,76 @@ import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.SparkSession
 import scala.collection.mutable.HashMap
 import scala.util.Try
+import scala.collection.JavaConversions._
 
 class SparkMongoUtils(filters: Seq[Bson] = null, inputuri: SparkMongoIOStruct = null, jarName: String, extJars: Array[String] = Array(), outputuri: MongoIOStruct) {
 }
 
 object SparkMongoUtils{
-
+	
+	/**
+	 * these functions are used for scala coder
+	 * this migrateData used for migrate data to server at 15th or somewhere else.
+	 * @param sparkSession, if use spark to migrate data, then specify this param
+	 * @param inputuri, if not use spark, specify this
+	 * @param outputuri, use mongoclient to insert or update data
+	 */
+	def migrateData(spark: SparkSession = null, inputuri: MongoRWConfig = null, outputuri: MongoRWConfig = null, filters: Seq[Bson] = Seq()){
+		 if (spark != null) migrateDataSpark(spark, outputuri, filters) else migrateDataClient(inputuri, outputuri, filters)
+	}
+	
+	def migrateDataSpark(spark: SparkSession, outputuri: MongoRWConfig, filters: Seq[Bson]) = {
+		if (outputuri == null) MongoSpark.write(MongoSpark.builder().sparkSession(spark).pipeline(filters).build().toDF()) else{			
+			val rdd = MongoSpark.builder().sparkSession(spark).pipeline(filters).build().toRDD()
+			rdd.foreachPartition { iter => 
+				val muuLocal = new MongoUserUtils			
+				val mongoURI = new MongoClientURI(outputuri.uri)
+				println(s"output mongouri is: ${mongoURI.getURI}")
+				val mongo = new MongoClient(mongoURI)
+				val db = mongo.getDatabase(outputuri.db)
+				val coll = db.getCollection(outputuri.coll)
+				iter.foreach{ x => 
+					try{
+						coll.insertOne(x)
+					}catch{
+						case e: Throwable => e.printStackTrace() 
+					}
+				}
+				mongo.close()
+			}
+		}
+	}
+	
+	def migrateDataClient(inputuri: MongoRWConfig, outputuri: MongoRWConfig, filters: Seq[Bson]) = {
+		val arr = filters.toArray
+		assert(arr.length < 2, "too many filters")
+		val mongoinURI = new MongoClientURI(inputuri.uri)
+		val mongoin = new MongoClient(mongoinURI)
+		val dbin = mongoin.getDatabase(inputuri.db)
+		val collin = dbin.getCollection(inputuri.coll)
+		val mongooutURI = new MongoClientURI(outputuri.uri)
+		val mongoout = new MongoClient(mongooutURI)
+		val dbout = mongoout.getDatabase(outputuri.db)
+		val collout = dbout.getCollection(outputuri.coll)
+		val iter = if (arr.length == 0)	collin.find().iterator() else collin.find(arr(0)).iterator()
+		var count = 0
+		iter.foreach{x =>
+			try{				
+				collout.insertOne(x)
+				count = count + 1
+				if (count % 10000 == 0) println(s"now insert： ${count}")
+			}catch{
+				case e: Throwable => e.printStackTrace() 
+			}
+		}
+		mongoin.close()
+		mongoout.close()
+	}
+	
+	
+	/**
+	 * after this method is spark util for java coder
+	 */
 	def __init__(smu: SparkMongoUtilsStruct) = {
 		val spark =
 			if (smu.inputuri != null)
@@ -107,11 +171,13 @@ object DoWork extends Serializable{
 	}
 }
 
+case class MongoRWConfig(uri: String, db: String, coll: String)
+
 case class SparkMongoUtilsStruct(filters: Seq[Bson] = null, inputuri: SparkMongoIOStruct = null, jarName: String, extJars: Array[String] = Array(), outputuri: MongoIOStruct)
 
 case class SparkMongoIOStruct(mongoSparkURI: String = "")
 
-case class MongoIOStruct(uri: String, db: String, coll: String, user: String, pw: String, authdb: String){	
+case class MongoIOStruct(uri: String, db: String, coll: String, user: String = null, pw: String, authdb: String){
 	def generateMongoSparkURI = s"mongodb://${user}:${pw}@${uri}/${db}.${coll}?authSource=${authdb}"
 	def generateMongoURI = new MongoUserUtils().generateMongoURI(user, pw, uri, authdb) 
 }

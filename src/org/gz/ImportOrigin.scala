@@ -137,7 +137,7 @@ object ImportOrigin {
 		log.warn("GetAllFiles start: " + x.getPath)
 		val files = getAllFiles(x)
 		log.warn("GetAllFiles done: " + x.getPath)
-//		val timesdf = new SimpleDateFormat("yyyyMMdd  HH:mm:ss:SSS")
+		val timesdf = new SimpleDateFormat("yyyyMMdd  HH:mm:ss:SSS")
 		files.foreach(x => 
 			try{
 				var d = new Document
@@ -146,11 +146,12 @@ object ImportOrigin {
 				d.append("path", x.getPath)
 				d.append("content", filterHtml(Source.fromFile(x, detector(x)).getLines().toArray).mkString("\n"))
 				count = count+1
+				d.append("insertdate", new Date(System.currentTimeMillis()))
 				try{
 //					println(timesdf.format(new Date(System.currentTimeMillis())) + ": start insert one")
 					db.insertOne(d)
 //					println(timesdf.format(new Date(System.currentTimeMillis())) + ": end insert one")
-					val processedDoc = ImportDataProcess.processData(d)
+					val processedDoc = ImportDataProcess.processData(d)										
 //					println(timesdf.format(new Date(System.currentTimeMillis())) + ": end process")
 					processedDBs.foreach(_.insertOne(processedDoc))
 //					println(timesdf.format(new Date(System.currentTimeMillis())) + ": end insert3")

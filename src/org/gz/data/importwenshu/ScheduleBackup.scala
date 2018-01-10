@@ -24,12 +24,15 @@ import com.mongodb.client.model.InsertManyOptions
 import scala.collection.JavaConverters._
 import org.gz.util.MongoUserUtils
 import scala.collection.mutable.ArrayBuffer
+import org.gz.util.SparkMongoUtils
+import org.gz.util.MongoRWConfig
 
 object ScheduleBackup extends Conf{
 	// 	System.setProperty("hadoop.home.dir", "D:/hadoop-common")
 	val log = LogManager.getLogger(this.getClass.getName())
 	val (user, passwd, authDB) = (config.getString("mongo.cluster.user"), config.getString("mongo.cluster.passwd"), config.getString("mongo.cluster.authDB"))	
-	lazy val spark = new MongoUserUtils().sparkSessionBuilder() 
+	val muu = new MongoUserUtils
+	val spark = muu.sparkSessionBuilder(inputuri = muu.customizeSparkClusterURI(s"datamining.origind"), jarName = "ScheduleImport.jar")
 	
 	//带认证的方式调用MongoDB会出现不能初始化的错误，我觉得是因为mongoURI不能序列化的原因。
 //	val mongoURI = new MongoClientURI(s"")
@@ -40,67 +43,20 @@ object ScheduleBackup extends Conf{
 	val sdf = new SimpleDateFormat("yyyyMMdd")	
 	
   def doBackUp(c: Calendar) = {
-		val backName = s"backup${sdf.format(c.getTime)}"
-		c.add(Calendar.DAY_OF_MONTH, -21)
-		val muu = new MongoUserUtils
+		val backName = s"origin${sdf.format(c.getTime)}"
+		c.add(Calendar.WEEK_OF_MONTH, -6)		
 		try{
 			val mongoURI2 = new MongoClientURI(muu.backupMongoURI)
 			val mongo2 = new MongoClient(mongoURI2)
 			val db2 = mongo2.getDatabase("wenshu")
-			val dbColl3 = db2.getCollection(s"backup${sdf.format(c.getTime)}")
+			val dbColl3 = db2.getCollection(s"origin${sdf.format(c.getTime)}")
 			dbColl3.drop
 			mongo2.close
 		}catch{
-			case e: Throwable => log.error("drop3周前的表失败") 
-		}
-  	val rdd = MongoSpark.builder().sparkSession(spark).build().toRDD()
-  	rdd.persist(StorageLevel.MEMORY_AND_DISK)
-   	println(rdd.count())   	
-   	val uri = muu.clusterMongoURI
-   	val uri2 = muu.backupMongoURI
-  	rdd.foreachPartition { x => {  		
-  		val mongoURI = new MongoClientURI(uri)
-			val mongo = new MongoClient(mongoURI)
-			val db = mongo.getDatabase("wenshu")
-			val dbColl = db.getCollection("originbackup")
-						
-			val mongoURI2 = new MongoClientURI(uri2)
-			val mongo2 = new MongoClient(mongoURI2)
-			val db2 = mongo2.getDatabase("wenshu")
-			val dbColl2 = db2.getCollection(backName)
-			
-			var count = 0
-			var resList = new ArrayList[Document]
-			x.foreach(y => {
-//				count = count + 1
-//				resList add y
-				try{
-					dbColl.replaceOne(eqq("_id", y.get("_id")), y, new UpdateOptions().upsert(true))
-					dbColl2.insertOne(y)
-				}catch{
-					case e: Throwable => e.printStackTrace()
-				}
-				
-//				使用这种方式插入会导致插入的数据和真实数据数量对应不上， 先注释掉有机会再找原因
-//				if (count == 10000){
-//					try{					
-//						dbColl2.insertMany(resList, new InsertManyOptions().ordered(false))
-//					}catch{
-//						case e: Throwable => e.printStackTrace()
-//					}
-//					resList.clear
-//					count = 0
-//				}
-			})
-//			if (count > 0)
-//				try{					
-//					dbColl2.insertMany(resList, new InsertManyOptions().ordered(false))
-//				}catch{
-//					case e: Throwable => e.printStackTrace()
-//				}
-  		mongo.close
-  		mongo2.close
-  	} }
+			case e: Throwable => log.error("drop6周前的表失败") 
+		}		
+		SparkMongoUtils.migrateData(spark = spark, outputuri = MongoRWConfig(muu.backupMongoURI, "wenshu", backName))
+	  spark.close()  	
   }
 	
 	def extractCasecausesToNewTable(name: String, caseCauses: Array[String]) = {

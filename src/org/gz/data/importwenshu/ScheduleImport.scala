@@ -103,9 +103,9 @@ object ScheduleImport extends Conf{
 	  ImportOrigin.folderToDocuments(
 	  		new File(wenshuPath + sdf.format(cal.getTime) + "/"), 
 	  		dbColl, 
-	  		mongo.getDatabase("updatesdata").getCollection("processeddata"),
-	  		mongo.getDatabase("wenshu").getCollection("origin2"),
-	  		mongo.getDatabase("forsearch").getCollection("updatesdata")	  		
+	  		mongo.getDatabase("updatesdata").getCollection("processeddata")
+	  		//mongo.getDatabase("wenshu").getCollection("origin2"),
+	  		//mongo.getDatabase("forsearch").getCollection("updatesdata")	  		
 	  		)
 	}
 	

@@ -141,7 +141,7 @@ object SeperateCollection extends Conf{
 
 	}
 	
-	def doSeperateData = {
+	def doSeperateData(client: String = "") = {
 		val rootfile = new File("C:/Users/cloud/Desktop/类案搜索/数据拆分分组/")
 		//casecause -> CollectonName
 		val hm = new HashMap[String, String]()
@@ -165,10 +165,12 @@ object SeperateCollection extends Conf{
 			val uri = s"${Utils.getIpAddress}:27017"
 			println(s"local uri is: ${uri}")
 			val mongoURI = 
-				if (mongosUris.split(",").contains(uri))
-			 		new MongoClientURI(muuLocal.clusterLocalMongoURI(uri))
-				else 
-					new MongoClientURI(muuLocal.clusterURI)
+				if (client != "backup"){					
+					if (mongosUris.split(",").contains(uri))
+				 		new MongoClientURI(muuLocal.clusterLocalMongoURI(uri))
+					else 
+						new MongoClientURI(muuLocal.clusterURI)
+				}else new MongoClientURI(muuLocal.backupMongoURI)
 			println(s"local mongouri is: ${mongoURI.getURI}")
 			val mongo = new MongoClient(mongoURI)
 			val db = mongo.getDatabase("datamining")			
@@ -214,7 +216,7 @@ object SeperateCollection extends Conf{
 	}
 	
 	def main(args: Array[String]): Unit = {
-		doSeperateData
+		doSeperateData()
 		//doInsertMD5
 	}
 }

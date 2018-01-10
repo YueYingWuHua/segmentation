@@ -84,9 +84,9 @@ public class FilterQuotation {
 	}
 	
 	public static void main(String[] args) {		
-		String strs = "“12‘规’规定‘123。’。12”第二行\"123321\"。规定“去去去”。本院认为";
+		//String strs = "“12‘规’规定‘123。’。12”第二行\"123321\"。规定“去去去”。本院认为";
 		String str2 = "马“牌轿车1辆（价值10万元），无现金、存款、债权，债务。在婚后的家庭生活中双方因家庭琐事产生矛盾，2015年7月28日双方分居生活至今。\n另查明，黑某的妹妹因购房资金不够，黑某向马某某借款3万元，还款期限为2012年10月1日。\n原审法院认为，根据《中华人民共和国婚姻法》第三十二条第三款第五项有下列情形之一,调解无效的，应准予离婚：……(五)其他导致夫妻感情破裂的情形；……”的规定";
-		String str3 = "马“五其他”的规定";
+		//String str3 = "马“五其他”的规定";
 		System.out.println(new FilterQuotation().filterQuotation(str2, new ArrayList<String>()));
 	}
 }

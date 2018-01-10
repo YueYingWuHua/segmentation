@@ -242,7 +242,7 @@ object ScheduleImport extends Conf{
 	  				}catch{
 	  					case e: Throwable => log.error(e)
 	  				}	  				
-	  				cw.add(Calendar.WEEK_OF_MONTH, 1)
+	  				cw.add(Calendar.WEEK_OF_MONTH, 2)
 	  			}
 				}catch{
 					case e: Throwable => log.error(e)

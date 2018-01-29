@@ -27,8 +27,9 @@ import java.util.ArrayList
 import scala.util.Try
 import java.util.Date
 import java.util.regex.Pattern
+import org.gz.util.Conf
 
-object TestOthers {
+object TestOthers extends Conf{
   
   def testBasicLable = {
     val doc=new Document
@@ -136,9 +137,7 @@ object TestOthers {
   	try{  		
   		//copyCollection
  	  	//testGetSentence
-  		//testFilter
-  		val folder = new File("C:/Users/cloud/Desktop/类案搜索/数据拆分分组2")
-  		folder.list.foreach {println}
+  		//testFilter  
 //  		val rootfile = new File("C:/Users/cloud/Desktop/类案搜索/数据拆分分组/")
 //		//casecause -> CollectonName
 //			val hm = new HashMap[String, String]()
@@ -153,10 +152,11 @@ object TestOthers {
 //					}
 //				}
 //			}
+  		println(config.getString("data-root"))
   	}catch{
   		case e: java.util.zip.ZipException =>
   			print(true)
-  		case e2: Throwable => 
+  		case e2: Throwable => e2.printStackTrace()
   	}
   }
   

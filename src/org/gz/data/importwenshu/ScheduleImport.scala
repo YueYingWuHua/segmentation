@@ -230,8 +230,10 @@ object ScheduleImport extends Conf{
 					val f = new File(wenshuRarPath + sdf.format(cn.getTime) + ".rar")
 					if (!f.exists())
 	  				doInsertByTime(cn)
-	  			else
+	  			else {
 	  				log.warn(s"file exist: ${f.getPath}")
+	  				cn.add(Calendar.DAY_OF_MONTH, 1)
+	  			}
 	  			//done  数据处理已加入，但是没测试，现在进行到插入processeddata，如果测试成功则进行下一步
 	  			//done  处理完毕后插入到origin2和forsearch中 ,完成			
 	  			//done  要确保插入完了进行备份，所以单线程执行备份,完成

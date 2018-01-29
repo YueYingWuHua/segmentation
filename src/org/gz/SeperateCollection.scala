@@ -185,6 +185,9 @@ object SeperateCollection extends Conf{
 								db.getCollection(s).insertOne(x)								
 							}
 						case None =>
+							Try{
+								db.getCollection("无分类").insertOne(x)								
+							}
 					}						
 				}}
 			mongo.close()

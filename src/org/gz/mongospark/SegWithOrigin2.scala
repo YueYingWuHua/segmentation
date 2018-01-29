@@ -24,6 +24,8 @@ import scala.collection.JavaConverters._
 import org.gz.util.Conf
 import org.gz.util.MongoUserUtils
 import com.mongodb.MongoClientURI
+import org.apache.spark.storage.StorageLevel
+import org.gz.util.Utils
 
 /**
  * 二审分段数据的spark版本，
@@ -129,7 +131,7 @@ object SegWithOrigin2 extends Conf{
 		d.append("全文", arr全文.asJava)
 	}
 	
-	def segment(arr: Array[String]) = {
+	def segment(arr: Array[String], summary: String = null) = {
 	//结果
 		val processedData = ArrayBuffer[(String, String)]()
 		val hashset = HashSet[String]()
@@ -192,30 +194,94 @@ object SegWithOrigin2 extends Conf{
 			
 		}
 		processedData += ((last, strs))	
-		val d = mergeyishen(processedData)
+		var d = new Document
+		var 一审经过 = new Document
+		var yishenjingguo = ""
+		var firsty = 0
+		var lasty = -1
+		for (i <- 0 until processedData.length){
+			processedData(i)._1 match{
+				case "上诉人诉称" => processedData(i) = ("诉称", processedData(i)._2)
+				case "被上诉人辩称" => processedData(i) = ("辩称", processedData(i)._2)
+				case "一审被告辩称"|"一审第三人称"|"一审法院查明"|"一审法院认为"|"一审原告称" =>
+					if (firsty == 0) firsty = i
+					lasty = i					
+				case _ => 
+			}
+		}
+		var 一审 = ArrayBuffer[(String, String)]()
+		for (i <- (firsty to lasty).reverse){
+			processedData(i)._1 match{
+				case "一审被告辩称"|"一审第三人称"|"一审法院查明"|"一审法院认为"|"一审原告称" => 
+					一审 += ((processedData(i)._1, processedData(i)._2))
+					yishenjingguo = processedData(i)._2 + yishenjingguo
+				case _ => processedData(i - 1) = (processedData(i - 1)._1, processedData(i - 1)._2 + processedData(i)._2)
+			}
+		}
+		一审经过.append("全文", yishenjingguo)
+		一审.reverse.foreach(x => 一审经过.append(x._1, x._2))
+		val arr全文 = ArrayBuffer[Document]()
+		if ((summary != null)&&(summary != "")) {
+		  val doctemp = new Document()
+		  doctemp.append("裁判摘要", summary)
+		  arr全文 += doctemp
+		}
+		for (i <- 0 until firsty)
+			if (processedData(i)._1 != "none"){ 
+				d.append(processedData(i)._1, processedData(i)._2)
+				val tmp = new Document 
+				tmp.append(processedData(i)._1, processedData(i)._2)
+				arr全文 += tmp
+			}
+		if (firsty > 0) {
+			d.append("一审经过", 一审经过)
+			val tmp = new Document 
+			tmp.append("一审经过", 一审经过.get("全文"))
+			arr全文 += tmp
+		}
+		for (i <- (lasty+1) until processedData.length) 
+			if (processedData(i)._1 != "none"){
+				d.append(processedData(i)._1, processedData(i)._2)
+				val tmp = new Document 
+				tmp.append(processedData(i)._1, processedData(i)._2)
+				arr全文 += tmp
+			}
+		d.append("全文", arr全文.asJava)
 		d
 	}
 	
-	lazy val mongoURI = new MongoClientURI(new MongoUserUtils().clusterMongoURI)
-	lazy val mongo = new MongoClient(mongoURI)
-	private lazy val db = mongo.getDatabase("wenshu")
-	private lazy val dbColl = db.getCollection("origin2")
-	
 	def main(args: Array[String]): Unit = {
  // 	System.setProperty("hadoop.home.dir", "D:/hadoop-common")
-    val spark = new MongoUserUtils().sparkSessionBuilder()
+		val muu = new MongoUserUtils()
+    val spark = muu.sparkSessionBuilder(inputuri = muu.customizeSparkClusterURI("datamining.processeddata"), jarName = "segershen.jar")
    	val rdd = MongoSpark.builder().sparkSession(spark).pipeline(Seq(`match`(eqq("basiclabel.procedure", "二审")))).build.toRDD()   	
-   	rdd.cache()
-   	println(rdd.count())
    	val c = 11.toChar
-   	rdd.foreach{ x => {
-   		try{
-   			val str = x.getString("content").split(s"[${c}\n]")
-   			dbColl.updateOne(eqq("_id", x.get("_id")), set("segdata", segment(str)))
-   		}catch{
-   			case e: Throwable => e.printStackTrace()
-   		}
-   	}}
-    mongo.close()
+   	rdd.persist(StorageLevel.MEMORY_AND_DISK)
+		println(rdd.count())
+		val mongosUris = config.getString("mongodb.clusteruriall")
+		rdd.foreachPartition{ iter =>
+			//选取最近的mongos进行数据更新
+			val muuLocal = new MongoUserUtils
+			val uri = s"${Utils.getIpAddress}:27017"
+			println(s"local uri is: ${uri}")
+			val mongoURI = 				
+				if (mongosUris.split(",").contains(uri))
+					new MongoClientURI(muuLocal.clusterLocalMongoURI(uri))
+				else 
+					new MongoClientURI(muuLocal.clusterURI)
+			println(s"local mongouri is: ${mongoURI.getURI}")
+			val mongo = new MongoClient(mongoURI)
+			val db = mongo.getDatabase("datamining")
+			val dbColl = db.getCollection("origind")
+			iter.foreach{x => {
+	   		try{
+	   			val str = x.getString("content").split(s"[${c}\n]")
+	   			dbColl.updateOne(eqq("_id", x.get("_id")), set("segdata", segment(str)))
+	   		}catch{
+	   			case e: Throwable => e.printStackTrace()
+	   		}
+   		}}
+			mongo.close()
+		}
 	}
 }

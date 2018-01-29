@@ -28,6 +28,8 @@ class MongoUserUtils extends Conf{
   
   def origin2URI = s"mongodb://${clusterUser}:${clusterPW}@${clusterURIAll}/wenshu.origin2?authSource=${clusterAuthDB}"
   
+  def origindURI = s"mongodb://${clusterUser}:${clusterPW}@${clusterURIAll}/datamining.origind?authSource=${clusterAuthDB}"
+  
   def backupDefaultURI = s"mongodb://${backupUser}:${backupPW}@${backupURI}/wenshu.backup?authSource=${backupAuthDB}"
   
   def customizeSparkClusterURI(dbcoll: String) = s"mongodb://${clusterUser}:${clusterPW}@${clusterURIAll}/${dbcoll}?authSource=${clusterAuthDB}"

@@ -42,8 +42,8 @@ object MigrateSepCollTo15 {
 		val muu = new MongoUserUtils	  
 	  SparkMongoUtils.migrateData(inputuri = MongoRWConfig(muu.clusterMongoURI, "datamining", "gongbao_anli_seg"), outputuri = MongoRWConfig(muu.backupMongoURI, "datap", "gongbao_anli_seg"))
 	}
-	
+		
   def main(args: Array[String]): Unit = {
-  	migrateOrigin
+  	migrateOriginAndSeperate
   }
 }

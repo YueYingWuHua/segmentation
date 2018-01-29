@@ -151,9 +151,11 @@ object ImportOrigin {
 //					println(timesdf.format(new Date(System.currentTimeMillis())) + ": start insert one")
 					db.insertOne(d)
 //					println(timesdf.format(new Date(System.currentTimeMillis())) + ": end insert one")
-					val processedDoc = ImportDataProcess.processData(d)										
+					//TODO: 由于修改了conf类，所以分段跑不了了，暂时注释这段代码					
+					//val processedDoc = ImportDataProcess.processData(d)										
 //					println(timesdf.format(new Date(System.currentTimeMillis())) + ": end process")
-					processedDBs.foreach(_.insertOne(processedDoc))
+					//TODO: 由于修改了conf类，所以分段跑不了了，暂时注释这段代码
+					//processedDBs.foreach(_.insertOne(processedDoc))
 //					println(timesdf.format(new Date(System.currentTimeMillis())) + ": end insert3")
 				}catch {
 					case e : Throwable => e.printStackTrace()

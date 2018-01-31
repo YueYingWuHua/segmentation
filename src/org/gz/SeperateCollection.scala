@@ -154,10 +154,10 @@ object SeperateCollection extends Conf{
 		hm.foreach(println)
 		val (user, passwd, authDB) = (config.getString("mongo.cluster.user"), config.getString("mongo.cluster.passwd"), config.getString("mongo.cluster.authDB"))
 		val muu = new MongoUserUtils
-		lazy val spark = muu.sparkSessionBuilder(jarName = "SeperateCollection.jar")
+		lazy val spark = muu.sparkSessionBuilder(inputuri = muu.origindURI, jarName = "MigrateSepCollTo15.jar")
 		val rdd = MongoSpark.builder().sparkSession(spark).build().toRDD()
-		rdd.persist(StorageLevel.MEMORY_AND_DISK)
-		println(rdd.count())
+		//rdd.persist(StorageLevel.MEMORY_AND_DISK)
+		//println(rdd.count())
 		val mongosUris = config.getString("mongodb.clusteruriall")
 		rdd.foreachPartition{ iter =>
 			//选取最近的mongos进行数据更新

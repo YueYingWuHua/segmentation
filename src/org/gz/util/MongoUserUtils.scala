@@ -40,7 +40,7 @@ class MongoUserUtils extends Conf{
   	SparkSession.builder()
 //			.master("local")
 			.master(sparkURI)
-			.config(new SparkConf().setJars(Array(s"${hdfsURI}/mongolib/mongo-spark-connector_2.11-2.0.0.jar",
+			.config(new SparkConf().setJars(Array(s"${hdfsURI}/mongolib/mongo-spark-connector_2.11-2.2.1.jar",
 					s"${hdfsURI}/mongolib/bson-3.4.2.jar",
 					s"${hdfsURI}/mongolib/mongo-java-driver-3.4.2.jar",
 					s"${hdfsURI}/mongolib/mongodb-driver-3.4.2.jar",
@@ -54,6 +54,7 @@ class MongoUserUtils extends Conf{
 			.config("spark.mongodb.input.uri", inp)
 			.config("spark.mongodb.output.uri", oup)
 			.config("spark.mongodb.input.partitionerOptions.samplesPerPartition", 1)
+			.config("spark.mongodb.input.partitionerOptions.partitionSizeMB", 128)			
 			.getOrCreate()
   }
   

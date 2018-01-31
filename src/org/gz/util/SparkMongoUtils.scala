@@ -27,11 +27,11 @@ object SparkMongoUtils{
 	 * @param inputuri, if not use spark, specify this
 	 * @param outputuri, use mongoclient to insert or update data
 	 */
-	def migrateData(spark: SparkSession = null, inputuri: MongoRWConfig = null, outputuri: MongoRWConfig = null, filters: Seq[Bson] = Seq()){
-		 if (spark != null) migrateDataSpark(spark, outputuri, filters) else migrateDataClient(inputuri, outputuri, filters)
+	def migrateData(spark: SparkSession = null, inputuri: MongoRWConfig = null, outputuri: MongoRWConfig = null, filters: Seq[Bson] = Seq(), migrateOptions: MigrateOptions.InsertOptions = MigrateOptions.insert){
+		 if (spark != null) migrateDataSpark(spark, outputuri, filters, migrateOptions) else migrateDataClient(inputuri, outputuri, filters, migrateOptions)
 	}
 	
-	def migrateDataSpark(spark: SparkSession, outputuri: MongoRWConfig, filters: Seq[Bson]) = {
+	def migrateDataSpark(spark: SparkSession, outputuri: MongoRWConfig, filters: Seq[Bson], migrateOptions: MigrateOptions.InsertOptions = MigrateOptions.insert) = {
 		if (outputuri == null) MongoSpark.write(MongoSpark.builder().sparkSession(spark).pipeline(filters).build().toDF()) else{			
 			val rdd = MongoSpark.builder().sparkSession(spark).pipeline(filters).build().toRDD()
 			rdd.foreachPartition { iter => 
@@ -43,7 +43,11 @@ object SparkMongoUtils{
 				val coll = db.getCollection(outputuri.coll)
 				iter.foreach{ x => 
 					try{
-						coll.insertOne(x)
+						migrateOptions match {
+							case MigrateOptions.insert => coll.insertOne(x)
+							case MigrateOptions.replace => coll.replaceOne(eqq("_id", x.getString("_id")), x)
+							case _ => 
+						}
 					}catch{
 						case e: Throwable => e.printStackTrace() 
 					}
@@ -53,7 +57,7 @@ object SparkMongoUtils{
 		}
 	}
 	
-	def migrateDataClient(inputuri: MongoRWConfig, outputuri: MongoRWConfig, filters: Seq[Bson]) = {
+	def migrateDataClient(inputuri: MongoRWConfig, outputuri: MongoRWConfig, filters: Seq[Bson], migrateOptions: MigrateOptions.InsertOptions = MigrateOptions.insert) = {
 		val arr = filters.toArray
 		assert(arr.length < 2, "too many filters")
 		val mongoinURI = new MongoClientURI(inputuri.uri)
@@ -67,8 +71,12 @@ object SparkMongoUtils{
 		val iter = if (arr.length == 0)	collin.find().iterator() else collin.find(arr(0)).iterator()
 		var count = 0
 		iter.foreach{x =>
-			try{				
-				collout.insertOne(x)
+			try{
+				migrateOptions match {
+					case MigrateOptions.insert => collout.insertOne(x)
+					case MigrateOptions.replace => collout.replaceOne(eqq("_id", x.getString("_id")), x)
+					case _ => 
+				}
 				count = count + 1
 				if (count % 10000 == 0) println(s"now insert： ${count}")
 			}catch{
@@ -169,6 +177,11 @@ object DoWork extends Serializable{
 		}		
 		doc
 	}
+}
+
+object MigrateOptions extends Enumeration{
+	type InsertOptions = Value
+	val insert, replace = Value
 }
 
 case class MongoRWConfig(uri: String, db: String, coll: String)

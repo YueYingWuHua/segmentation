@@ -5,6 +5,7 @@ import org.gz.util.SparkMongoUtils
 import org.gz.util.MongoRWConfig
 import java.io.File
 import org.gz.SeperateCollection
+import org.gz.util.MigrateOptions
 
 object MigrateSepCollTo15 {
 	
@@ -32,10 +33,11 @@ object MigrateSepCollTo15 {
 		SeperateCollection.doSeperateData("backup")
 	}
 	
-	def migratelocal = {
+	def migratelocal(f: Boolean) = {
 		val muu = new MongoUserUtils
-	  val spark = muu.sparkSessionBuilder(inputuri = muu.customizeSparkClusterURI("wenshu.origin2"), jarName = "MigrateSepCollTo15.jar")
-	  SparkMongoUtils.migrateData(spark = spark, outputuri = MongoRWConfig(muu.clusterMongoURI, "datamining", "origind"))
+		val (source, dest, destColl) = if (f) ("wenshu.origin2", "datamining", "origind") else ("datamining.origind", "wenshu", "origin2")
+	  val spark = muu.sparkSessionBuilder(inputuri = muu.customizeSparkClusterURI(source), jarName = "MigrateSepCollTo15.jar")
+	  SparkMongoUtils.migrateData(spark = spark, outputuri = MongoRWConfig(muu.clusterMongoURI, dest, destColl), migrateOptions = MigrateOptions.replace)
 	}
 	
 	def migrategongbao = {
@@ -44,6 +46,7 @@ object MigrateSepCollTo15 {
 	}
 		
   def main(args: Array[String]): Unit = {
-  	migrateOriginAndSeperate
+  	//migrateOriginAndSeperate
+  	migratelocal(false)
   }
 }

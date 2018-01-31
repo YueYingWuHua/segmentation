@@ -272,7 +272,7 @@ object SegWithOrigin2 extends Conf{
 			println(s"local mongouri is: ${mongoURI.getURI}")
 			val mongo = new MongoClient(mongoURI)
 			val db = mongo.getDatabase("datamining")
-			val dbColl = db.getCollection("origind")
+			val dbColl = db.getCollection("processeddata")
 			iter.foreach{x => {
 	   		try{
 	   			val str = x.getString("content").split(s"[${c}\n]")

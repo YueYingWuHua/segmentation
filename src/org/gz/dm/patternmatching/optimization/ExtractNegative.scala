@@ -15,85 +15,110 @@ import java.io.File
 import scala.collection.JavaConversions._
 import scala.io.Source
 import scala.collection.mutable.HashMap
+import java.util.List
+import scala.collection.JavaConversions._
 
 object ExtractNegative {
   private lazy val mongoURI = new MongoClientURI(new MongoUserUtils().clusterMongoURI)
 	private lazy val mongo = new MongoClient(mongoURI)
 	private lazy val db = mongo getDatabase "datamining"
-	private lazy val dbColl = db getCollection "sampledata"
+	private lazy val dbColl = db getCollection "origind"
 	val sampleCount = 100
-	private val negativeWords = ArrayBuffer(("不", 1), ("没有", 10), ("不得", 5), ("未", 2))
+	private val negativeWords = ArrayBuffer(("不予", 1), ("没有1", 10), ("不得1", 5), ("未1", 2))
 	
-	def addNegativeWords(word: String, range: Int = 1) = negativeWords += ((word, range))
-	
-	def sampledata(casecause: String) = {
-		val count1 = dbColl.count(and(eqq("basiclabel.casecause", casecause), nne("mininglabel", null)))
-		val step = Math.floor((count1 / sampleCount * 2 - 1)).toInt 
-		println(count1)
-		println(step)
-		val iter = dbColl.find(and(eqq("basiclabel.casecause", casecause), nne("mininglabel", null))).iterator()
-		var r = new Random
-    def nextInt = r.nextInt(step) + 1
-    var i = nextInt
-    var count = 0
-    var doc = new Document() 
-		val docs = new ArrayBuffer[Document]()
-    var ins = 0
-    while (iter.hasNext()){
-    	doc = iter.next()
-    	if (count == i){
-    		ins = ins + 1
-    		i = i + nextInt
-	    	docs += doc	    	
-    	}
-    	count = count + 1    	
-    }
-		println(count)
-		docs
-  }
+	def addNegativeWords(word: String, range: Int = 1) = negativeWords += ((word, range))	
   
-  
-  
-  def containsNegativeKeyWord(sentence: String, key: String) = {
-  	val words = key.split(",|，")
-  	var flag = true
-  	val poi = ArrayBuffer[Integer]()
-  	words.foreach{x => 
-  		val index = sentence.indexOf(x)
-  		if (index > 0) {
-  			poi += index  			
-  		} else flag = false
+  def addSentenceToBuffer(str: String) = {
+  	var arr = ArrayBuffer[String]()
+  	if (str != null) {
+  		val strs = str.split("。")
+  		strs.foreach { x =>
+  			negativeWords.foreach(y => {
+  				if (x.contains(y._1)) arr += x 
+  			})
+  		}  		
   	}
-  	var flag2 = false
-  	if (flag)
-  		negativeWords.foreach(x => {  			
-  			val index = sentence.indexOf(x)
-  			poi.foreach { y => 
-  			}
-	  		flag2 = flag2 || sentence.contains(x._1)  		
-  		})
-  	flag&flag2
+  	arr
   }
   
-  def getSentence(doc: Document): String = {
-  	val segdata = doc.get("segdata", classOf[Document])
-  	var sentence = ""
-  	if (segdata != null)  	
-  		segdata.keySet().foreach { x =>
-  			if ((x != "当事人")&&(x != "附")&&(x != "一审经过")&&(x != "全文")){
-  				val str = segdata.getString(x)
-  				if (str != null) sentence = sentence + "\n" + str
-  			} else if (x == "一审经过") {
-  				val 一审 = segdata.get(x, classOf[Document])
-  				if (一审 != null){
-  					val str = 一审.getString("全文")
-  					if (str != null) sentence = sentence + "\n" + str
-  				}
-  			}
+  def sample = {
+  	val iter = dbColl.find().iterator()  	
+  	for (i <- 0 until sampleCount){
+  		var arr = ArrayBuffer[String]()
+  		val doc = iter.next()
+  		val seg = doc.get("segdata", classOf[Document])
+  		if (seg != null){
+  			val 本院查明 = seg.getString("本院查明")
+  			val 本院认为 = seg.getString("本院认为")
+  			arr ++= addSentenceToBuffer(本院查明)
+  			arr ++= addSentenceToBuffer(本院认为)  			
   		}
-  	sentence
+  		arr foreach println
+  	}
+  	mongo.close()
   }
+  
+  def getIndexOfWord(sentence: String) = {
+  	10
+  }  
+  
+  def containsNegativeKeyWord(sentence: String) = {
+  	val wordIndex = getIndexOfWord(sentence)
+  	var flag = false  	
+  	negativeWords.foreach{x => 
+  		val index = sentence.indexOf(x._1)
+  		if ((index > 0)&&(math.abs(wordIndex - index) < x._2)) {
+  			flag = !flag  			
+  		}
+  	}  	
+  	flag
+  }  
+  
+  def checkSentences(sens: List[String]) = {
+  	val s2 = ArrayBuffer[String]()
+  	sens.foreach { x =>
+  		if (!containsNegativeKeyWord(x)) s2 += x 
+  	}
+  	s2
+  }
+  
+  def processAnQing = {
+  	val mongoURI = new MongoClientURI(new MongoUserUtils().clusterMongoURI)
+  	val mongo = new MongoClient(mongoURI)
+  	val db = mongo.getDatabase("datamining")
+  	val dbColl = db.getCollection("民间借贷纠纷")
+  	var res = ArrayBuffer[String]()
+  	dbColl.find().foreach { x =>
+  		val mining = x.get("mining", classOf[Document])
+  		if (mining != null){
+  			val aqSentence = mining.get("案情特征句子", classOf[List[String]])
+  			res = if (aqSentence != null) checkSentences(aqSentence) else ArrayBuffer[String]()  			
+  		}  			
+  	}
+  	mongo.close()
+  	res
+  }  
+  
+//  def getSentence(doc: Document): String = {
+//  	val segdata = doc.get("segdata", classOf[Document])
+//  	var sentence = ""
+//  	if (segdata != null)  	
+//  		segdata.keySet().foreach { x =>
+//  			if ((x != "当事人")&&(x != "附")&&(x != "一审经过")&&(x != "全文")){
+//  				val str = segdata.getString(x)
+//  				if (str != null) sentence = sentence + "\n" + str
+//  			} else if (x == "一审经过") {
+//  				val 一审 = segdata.get(x, classOf[Document])
+//  				if (一审 != null){
+//  					val str = 一审.getString("全文")
+//  					if (str != null) sentence = sentence + "\n" + str
+//  				}
+//  			}
+//  		}
+//  	sentence
+//  }
   
   def main(args: Array[String]): Unit = {
+  	sample
   }
 }

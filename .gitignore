@@ -2,3 +2,7 @@
 /.cache-main
 /.classpath
 /logs/
+/target/
+/.settings/
+/.project
+

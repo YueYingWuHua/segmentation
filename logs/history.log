@@ -3745,3 +3745,66 @@
 2017-10-25 at 15:40:00 CST WARN  org.gz.ImportOrigin$$anonfun$folderToDocuments$2 151 apply - start insert 10000:
 2017-10-25 at 15:40:06 CST WARN  org.gz.ImportOrigin$$anonfun$folderToDocuments$2 160 apply - finish insert 10000:
 2017-10-25 at 15:40:14 CST WARN  org.gz.ImportOrigin$ 172 folderToDocuments - All done: D:\library\wenshu\test\test\20171023
+2017-11-09 at 15:12:26 CST WARN  org.gz.ImportOrigin$ 134 folderToDocuments - new path start:D:\testwenshu
+2017-11-09 at 15:12:26 CST WARN  org.gz.ImportOrigin$ 135 folderToDocuments - GetAllFiles start: D:\testwenshu
+2017-11-09 at 15:12:26 CST WARN  org.gz.ImportOrigin$ 137 folderToDocuments - GetAllFiles done: D:\testwenshu
+2017-11-09 at 15:12:27 CST WARN  org.gz.ImportOrigin$ 164 folderToDocuments - All done: D:\testwenshu
+2017-11-29 at 10:43:39 CST INFO  org.gz.data.importwenshu.ScheduleImport$ 94 org$gz$data$importwenshu$ScheduleImport$$doInsert - Downloaded wenshu20171124 at Wed Nov 29 10:43:39 CST 2017
+2017-11-29 at 10:43:44 CST INFO  org.gz.data.importwenshu.ScheduleImport$ 69 unzipRar - start unzip file: D:/library/wenshu/20171124.rar
+2017-11-29 at 10:44:37 CST INFO  org.gz.data.importwenshu.ScheduleImport$ 98 org$gz$data$importwenshu$ScheduleImport$$doInsert - unziped wenshu
+2017-11-29 at 10:44:48 CST WARN  org.gz.ImportOrigin$ 136 folderToDocuments - new path start:D:\library\wenshu\20171124
+2017-11-29 at 10:44:48 CST WARN  org.gz.ImportOrigin$ 137 folderToDocuments - GetAllFiles start: D:\library\wenshu\20171124
+2017-11-29 at 10:44:49 CST WARN  org.gz.ImportOrigin$ 139 folderToDocuments - GetAllFiles done: D:\library\wenshu\20171124
+2017-11-29 at 10:50:50 CST WARN  org.gz.ImportOrigin$$anonfun$folderToDocuments$2 161 apply - insert 10000
+2017-11-29 at 10:56:59 CST WARN  org.gz.ImportOrigin$$anonfun$folderToDocuments$2 161 apply - insert 20000
+2017-11-29 at 11:10:02 CST WARN  org.gz.ImportOrigin$$anonfun$folderToDocuments$2 161 apply - insert 30000
+2017-11-29 at 11:16:17 CST WARN  org.gz.ImportOrigin$$anonfun$folderToDocuments$2 161 apply - insert 40000
+2017-11-29 at 11:21:31 CST WARN  org.gz.ImportOrigin$$anonfun$folderToDocuments$2 161 apply - insert 50000
+2017-11-29 at 11:30:59 CST WARN  org.gz.ImportOrigin$$anonfun$folderToDocuments$2 161 apply - insert 60000
+2017-11-29 at 11:32:15 CST WARN  org.gz.ImportOrigin$ 166 folderToDocuments - All done: D:\library\wenshu\20171124
+2017-11-29 at 11:32:15 CST WARN  org.gz.data.importwenshu.ScheduleImport$ 209 doInsertByTime - 0 more archives are still broken: 
+2017-11-29 at 11:34:42 CST INFO  org.gz.data.importwenshu.ScheduleImport$ 94 org$gz$data$importwenshu$ScheduleImport$$doInsert - Downloaded wenshu20171128 at Wed Nov 29 11:34:42 CST 2017
+2017-11-29 at 11:34:47 CST INFO  org.gz.data.importwenshu.ScheduleImport$ 69 unzipRar - start unzip file: D:/library/wenshu/20171128.rar
+2017-11-29 at 11:36:08 CST INFO  org.gz.data.importwenshu.ScheduleImport$ 98 org$gz$data$importwenshu$ScheduleImport$$doInsert - unziped wenshu
+2017-11-29 at 11:36:23 CST WARN  org.gz.ImportOrigin$ 136 folderToDocuments - new path start:D:\library\wenshu\20171128
+2017-11-29 at 11:36:23 CST WARN  org.gz.ImportOrigin$ 137 folderToDocuments - GetAllFiles start: D:\library\wenshu\20171128
+2017-11-29 at 11:36:25 CST WARN  org.gz.ImportOrigin$ 139 folderToDocuments - GetAllFiles done: D:\library\wenshu\20171128
+2017-11-29 at 11:37:06 CST WARN  org.gz.ImportOrigin$$anonfun$folderToDocuments$2 161 apply - insert 10000
+2017-11-29 at 11:37:43 CST WARN  org.gz.ImportOrigin$$anonfun$folderToDocuments$2 161 apply - insert 20000
+2017-11-29 at 11:38:22 CST WARN  org.gz.ImportOrigin$$anonfun$folderToDocuments$2 161 apply - insert 30000
+2017-11-29 at 11:39:01 CST WARN  org.gz.ImportOrigin$$anonfun$folderToDocuments$2 161 apply - insert 40000
+2017-11-29 at 11:39:36 CST WARN  org.gz.ImportOrigin$$anonfun$folderToDocuments$2 161 apply - insert 50000
+2017-11-29 at 11:40:22 CST WARN  org.gz.ImportOrigin$$anonfun$folderToDocuments$2 161 apply - insert 60000
+2017-11-29 at 11:40:57 CST WARN  org.gz.ImportOrigin$$anonfun$folderToDocuments$2 161 apply - insert 70000
+2017-11-29 at 11:40:58 CST ERROR org.gz.ImportOrigin$ 121 detector - java.io.FileNotFoundException: D:\library\wenshu\20171128\海南\2442\刑事案件\（2017）琼9025刑初53号_6d20c147-f8b3-460e-967a-a81e00093b6b判决书.txt (系统找不到指定的文件。)
+2017-11-29 at 11:40:58 CST ERROR org.gz.ImportOrigin$$anonfun$folderToDocuments$2 142 apply - java.lang.NullPointerException
+2017-11-29 at 11:40:58 CST ERROR org.gz.ImportOrigin$ 121 detector - java.io.FileNotFoundException: D:\library\wenshu\20171128\海南\2442\刑事案件\（2017）琼9025刑初71号_729d82c0-7b73-4dc2-8419-a8210030aadc判决书.txt (系统找不到指定的文件。)
+2017-11-29 at 11:40:58 CST ERROR org.gz.ImportOrigin$$anonfun$folderToDocuments$2 142 apply - java.lang.NullPointerException
+2017-11-29 at 11:40:59 CST ERROR org.gz.ImportOrigin$ 121 detector - java.io.FileNotFoundException: D:\library\wenshu\20171128\海南\2442\民事案件\（2016）琼9025民初800号_1f5c23a2-3dca-4738-95d4-a7fa0008b15d判决书.txt (系统找不到指定的文件。)
+2017-11-29 at 11:40:59 CST ERROR org.gz.ImportOrigin$$anonfun$folderToDocuments$2 142 apply - java.lang.NullPointerException
+2017-11-29 at 11:40:59 CST ERROR org.gz.ImportOrigin$ 121 detector - java.io.FileNotFoundException: D:\library\wenshu\20171128\海南\2442\民事案件\（2016）琼9025民初810号_dcfc4c36-79e2-43d0-bf74-a7fa0008ae1c判决书.txt (系统找不到指定的文件。)
+2017-11-29 at 11:40:59 CST ERROR org.gz.ImportOrigin$$anonfun$folderToDocuments$2 142 apply - java.lang.NullPointerException
+2017-11-29 at 11:40:59 CST ERROR org.gz.ImportOrigin$ 121 detector - java.io.FileNotFoundException: D:\library\wenshu\20171128\海南\2442\民事案件\（2016）琼9025民初813号_6e29d159-4530-44d5-85a3-a7fa0008b394判决书.txt (系统找不到指定的文件。)
+2017-11-29 at 11:40:59 CST ERROR org.gz.ImportOrigin$$anonfun$folderToDocuments$2 142 apply - java.lang.NullPointerException
+2017-11-29 at 11:40:59 CST ERROR org.gz.ImportOrigin$ 121 detector - java.io.FileNotFoundException: D:\library\wenshu\20171128\海南\2442\民事案件\（2016）琼9025民初822号_a5264686-01fa-4c64-a20f-a7fa0008adbe判决书.txt (系统找不到指定的文件。)
+2017-11-29 at 11:40:59 CST ERROR org.gz.ImportOrigin$$anonfun$folderToDocuments$2 142 apply - java.lang.NullPointerException
+2017-11-29 at 11:40:59 CST ERROR org.gz.ImportOrigin$ 121 detector - java.io.FileNotFoundException: D:\library\wenshu\20171128\海南\2442\民事案件\（2016）琼9025民初833号_b0119cec-00c6-4d4a-bed3-a7fa0008b3ff判决书.txt (系统找不到指定的文件。)
+2017-11-29 at 11:40:59 CST ERROR org.gz.ImportOrigin$$anonfun$folderToDocuments$2 142 apply - java.lang.NullPointerException
+2017-11-29 at 11:40:59 CST ERROR org.gz.ImportOrigin$ 121 detector - java.io.FileNotFoundException: D:\library\wenshu\20171128\海南\2442\民事案件\（2017）琼9025民初103号_98af3372-79ed-4686-8670-a81f01848ade判决书.txt (系统找不到指定的文件。)
+2017-11-29 at 11:40:59 CST ERROR org.gz.ImportOrigin$$anonfun$folderToDocuments$2 142 apply - java.lang.NullPointerException
+2017-11-29 at 11:41:00 CST ERROR org.gz.ImportOrigin$ 121 detector - java.io.FileNotFoundException: D:\library\wenshu\20171128\海南\2442\民事案件\（2017）琼9025民初73号_60f7b917-b1d1-4f87-9907-a81f0184973f判决书.txt (系统找不到指定的文件。)
+2017-11-29 at 11:41:00 CST ERROR org.gz.ImportOrigin$$anonfun$folderToDocuments$2 142 apply - java.lang.NullPointerException
+2017-11-29 at 11:41:00 CST ERROR org.gz.ImportOrigin$ 121 detector - java.io.FileNotFoundException: D:\library\wenshu\20171128\海南\2442\民事案件\（2017）琼9025民初785号_bf770a86-c271-4329-9c65-a81e00093a9d判决书.txt (系统找不到指定的文件。)
+2017-11-29 at 11:41:00 CST ERROR org.gz.ImportOrigin$$anonfun$folderToDocuments$2 142 apply - java.lang.NullPointerException
+2017-11-29 at 11:41:00 CST ERROR org.gz.ImportOrigin$ 121 detector - java.io.FileNotFoundException: D:\library\wenshu\20171128\海南\2442\民事案件\（2017）琼9025民初792号_903f4710-8818-4239-942b-a834018566ed判决书.txt (系统找不到指定的文件。)
+2017-11-29 at 11:41:00 CST ERROR org.gz.ImportOrigin$$anonfun$folderToDocuments$2 142 apply - java.lang.NullPointerException
+2017-11-29 at 11:41:00 CST ERROR org.gz.ImportOrigin$ 121 detector - java.io.FileNotFoundException: D:\library\wenshu\20171128\海南\2442\民事案件\（2017）琼9025民初81号_f426c5a6-0ade-4253-8888-a81f018497b9判决书.txt (系统找不到指定的文件。)
+2017-11-29 at 11:41:00 CST ERROR org.gz.ImportOrigin$$anonfun$folderToDocuments$2 142 apply - java.lang.NullPointerException
+2017-11-29 at 11:41:00 CST ERROR org.gz.ImportOrigin$ 121 detector - java.io.FileNotFoundException: D:\library\wenshu\20171128\海南\2442\民事案件\（2017）琼9025民初827号_256a870c-1384-4488-86a3-a83401856725判决书.txt (系统找不到指定的文件。)
+2017-11-29 at 11:41:00 CST ERROR org.gz.ImportOrigin$$anonfun$folderToDocuments$2 142 apply - java.lang.NullPointerException
+2017-11-29 at 11:41:00 CST ERROR org.gz.ImportOrigin$ 121 detector - java.io.FileNotFoundException: D:\library\wenshu\20171128\海南\2442\民事案件\（2017）琼9025民初99号_b65beeaa-c5a8-451e-bb20-a81f01848d9c判决书.txt (系统找不到指定的文件。)
+2017-11-29 at 11:41:00 CST ERROR org.gz.ImportOrigin$$anonfun$folderToDocuments$2 142 apply - java.lang.NullPointerException
+2017-11-29 at 11:41:33 CST WARN  org.gz.ImportOrigin$$anonfun$folderToDocuments$2 161 apply - insert 80000
+2017-11-29 at 11:42:12 CST WARN  org.gz.ImportOrigin$$anonfun$folderToDocuments$2 161 apply - insert 90000
+2017-11-29 at 11:42:36 CST WARN  org.gz.ImportOrigin$ 166 folderToDocuments - All done: D:\library\wenshu\20171128
+2017-11-29 at 11:42:36 CST WARN  org.gz.data.importwenshu.ScheduleImport$ 209 doInsertByTime - 0 more archives are still broken: 

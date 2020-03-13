@@ -29,7 +29,7 @@ object TestSchedulerMethods {
 		val sdf = new SimpleDateFormat("yyyyMMdd")
 		c.setTime(sdf.parse("20171023"))
   	ScheduleImport.doInsertByTime(c)
-	}
+	}	
 	
 	def main(args: Array[String]): Unit = {
 	  testCount
